@@ -58,4 +58,28 @@ describe('CodeEditor Component', () => {
     expect(screen.getByText('Line 3:')).toBeInTheDocument();
     expect(screen.getByText('Table missing closing brace')).toBeInTheDocument();
   });
+
+  it('toggles vim mode keybindings state on button click', () => {
+    render(
+      <CodeEditor
+        code="users {}"
+        onChange={vi.fn()}
+        errors={[]}
+        isOpen={true}
+        onClose={vi.fn()}
+      />
+    );
+
+    const vimButton = screen.getByRole('button', { name: 'VIM' });
+    expect(vimButton).toBeInTheDocument();
+    expect(vimButton).toHaveAttribute('title', 'Enable Vim keybindings');
+
+    fireEvent.click(vimButton);
+    expect(vimButton).toHaveAttribute('title', 'Vim keybindings enabled (Click to disable)');
+    expect(localStorage.getItem('schemacraft_vim_mode')).toBe('true');
+
+    fireEvent.click(vimButton);
+    expect(vimButton).toHaveAttribute('title', 'Enable Vim keybindings');
+    expect(localStorage.getItem('schemacraft_vim_mode')).toBe('false');
+  });
 });

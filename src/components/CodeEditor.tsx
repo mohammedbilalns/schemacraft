@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ErdError } from '../types/erd';
 import { EditorHeader } from './EditorHeader';
 import { EditorErrors } from './EditorErrors';
@@ -25,11 +25,23 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
   targetLine = null,
 }) => {
   const [jumpLine, setJumpLine] = useState<number | null>(targetLine);
+  const [isVimMode, setIsVimMode] = useState<boolean>(() => {
+    return localStorage.getItem('schemacraft_vim_mode') === 'true';
+  });
+  const statusRef = useRef<HTMLDivElement>(null);
   const [editorWidth, setEditorWidth] = useState<number>(() => {
     const saved = localStorage.getItem('schemacraft_editor_width');
     return saved ? Math.max(320, Math.min(850, parseInt(saved, 10))) : 480;
   });
   const [isResizing, setIsResizing] = useState(false);
+
+  const toggleVimMode = () => {
+    setIsVimMode((prev) => {
+      const next = !prev;
+      localStorage.setItem('schemacraft_vim_mode', String(next));
+      return next;
+    });
+  };
 
   useEffect(() => {
     setJumpLine(targetLine);
@@ -104,11 +116,18 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
             onChange={onChange}
             errors={errors}
             targetLine={jumpLine}
+            isVimMode={isVimMode}
+            statusElement={statusRef.current}
           />
         )}
       </div>
 
-      <EditorBottomBar lineCount={lines.length} />
+      <EditorBottomBar
+        lineCount={lines.length}
+        isVimMode={isVimMode}
+        onToggleVim={toggleVimMode}
+        statusRef={statusRef}
+      />
     </div>
   );
 };

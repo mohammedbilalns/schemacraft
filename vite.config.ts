@@ -9,6 +9,11 @@ const host = process.env.TAURI_DEV_HOST;
 // https://vite.dev/config/
 export default defineConfig(() => ({
   plugins: [tailwindcss(), react()],
+  resolve: {
+    alias: {
+      'monaco-editor/esm/vs/editor/editor.api': 'monaco-editor',
+    },
+  },
   test: {
     environment: "jsdom",
     globals: true,

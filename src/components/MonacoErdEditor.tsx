@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import Editor, { OnMount } from '@monaco-editor/react';
+import { initVimMode } from 'monaco-vim';
 import { ErdError } from '../types/erd';
 import { registerErdLanguage } from './monacoErdTheme';
 
@@ -8,6 +9,8 @@ interface MonacoErdEditorProps {
   onChange: (val: string) => void;
   errors: ErdError[];
   targetLine?: number | null;
+  isVimMode?: boolean;
+  statusElement?: HTMLDivElement | null;
 }
 
 export const MonacoErdEditor: React.FC<MonacoErdEditorProps> = ({
@@ -15,18 +18,55 @@ export const MonacoErdEditor: React.FC<MonacoErdEditorProps> = ({
   onChange,
   errors,
   targetLine,
+  isVimMode = false,
+  statusElement = null,
 }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const editorRef = useRef<any>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const monacoRef = useRef<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const vimModeRef = useRef<any>(null);
 
   const handleMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;
     monacoRef.current = monaco;
     registerErdLanguage(monaco);
     monaco.editor.setTheme('schemacraft-dark');
+
+    if (isVimMode) {
+      try {
+        vimModeRef.current = initVimMode(editor, statusElement || undefined);
+      } catch {
+        // ignore in environments without full DOM support
+      }
+    }
   };
+
+  useEffect(() => {
+    if (!editorRef.current) return;
+
+    if (isVimMode) {
+      if (!vimModeRef.current) {
+        try {
+          vimModeRef.current = initVimMode(editorRef.current, statusElement || undefined);
+        } catch {
+          // ignore
+        }
+      }
+    } else if (vimModeRef.current) {
+      vimModeRef.current.dispose();
+      vimModeRef.current = null;
+      if (statusElement) statusElement.innerHTML = '';
+    }
+
+    return () => {
+      if (vimModeRef.current) {
+        vimModeRef.current.dispose();
+        vimModeRef.current = null;
+      }
+    };
+  }, [isVimMode, statusElement]);
 
   // Jump to line when targetLine changes
   useEffect(() => {
