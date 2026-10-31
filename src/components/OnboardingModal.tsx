@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UserCheck, Sparkles, X, GitBranch, Mail, User } from 'lucide-react';
 import { GitUserConfig } from '../types/erd';
 
@@ -17,6 +17,11 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 }) => {
   const [name, setName] = useState(initialConfig.name);
   const [email, setEmail] = useState(initialConfig.email);
+
+  useEffect(() => {
+    if (initialConfig.name) setName(initialConfig.name);
+    if (initialConfig.email) setEmail(initialConfig.email);
+  }, [initialConfig.name, initialConfig.email]);
 
   if (!isOpen) return null;
 

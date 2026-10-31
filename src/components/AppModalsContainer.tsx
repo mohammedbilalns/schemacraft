@@ -98,7 +98,9 @@ export const AppModalsContainer: React.FC<ModalsContainerProps> = ({
         currentUser={currentUser}
         onSaveUserConfig={async (cfg) => {
           setCurrentUser(cfg);
-          await tauri.gitSetUserConfig(project.currentDir, cfg.name, cfg.email);
+          if (project.currentDir) {
+            await tauri.gitSetUserConfig(project.currentDir, cfg.name, cfg.email).catch(() => {});
+          }
           localStorage.setItem('schemacraft_onboarded', 'true');
           addLog(`Git author set to ${cfg.name} <${cfg.email}>`, 'success');
         }}

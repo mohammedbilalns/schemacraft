@@ -2,8 +2,11 @@ use std::process::Command;
 use crate::models::{GitCommitInfo, GitStatusInfo, GitUserConfig};
 
 pub fn run_git_cmd(dir: &str, args: &[&str]) -> Result<String, String> {
-    let output = Command::new("git")
-        .current_dir(dir)
+    let mut cmd = Command::new("git");
+    if !dir.is_empty() && std::path::Path::new(dir).is_dir() {
+        cmd.current_dir(dir);
+    }
+    let output = cmd
         .args(args)
         .output()
         .map_err(|e| format!("Failed to run git: {}", e))?;
@@ -136,11 +139,26 @@ pub fn git_show_file_at_commit(
 
 #[tauri::command]
 pub fn git_get_user_config(dir_path: String) -> Result<GitUserConfig, String> {
-    let name = run_git_cmd(&dir_path, &["config", "user.name"])
-        .or_else(|_| run_git_cmd(&dir_path, &["config", "--global", "user.name"]))
+    let local_name = if !dir_path.is_empty() && std::path::Path::new(&dir_path).is_dir() {
+        run_git_cmd(&dir_path, &["config", "user.name"]).ok()
+    } else {
+        None
+    };
+    let name = local_name
+        .filter(|s| !s.is_empty())
+        .or_else(|| run_git_cmd("", &["config", "--global", "user.name"]).ok())
+        .or_else(|| run_git_cmd("", &["config", "user.name"]).ok())
         .unwrap_or_default();
-    let email = run_git_cmd(&dir_path, &["config", "user.email"])
-        .or_else(|_| run_git_cmd(&dir_path, &["config", "--global", "user.email"]))
+
+    let local_email = if !dir_path.is_empty() && std::path::Path::new(&dir_path).is_dir() {
+        run_git_cmd(&dir_path, &["config", "user.email"]).ok()
+    } else {
+        None
+    };
+    let email = local_email
+        .filter(|s| !s.is_empty())
+        .or_else(|| run_git_cmd("", &["config", "--global", "user.email"]).ok())
+        .or_else(|| run_git_cmd("", &["config", "user.email"]).ok())
         .unwrap_or_default();
 
     Ok(GitUserConfig { name, email })

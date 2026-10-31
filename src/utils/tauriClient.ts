@@ -6,7 +6,7 @@ function isTauri(): boolean {
 }
 
 export async function selectDirectory(): Promise<string | null> {
-  if (!isTauri()) return prompt('Enter workspace directory path:', '/home/bilalnsmuhammed/draw-db/examples');
+  if (!isTauri()) return prompt('Enter workspace directory path:', '');
   return invoke<string | null>('select_directory');
 }
 
