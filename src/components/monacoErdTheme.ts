@@ -7,6 +7,31 @@ export function registerErdLanguage(monaco: any) {
 
   monaco.languages.register({ id: 'erd' });
 
+  monaco.languages.setLanguageConfiguration('erd', {
+    comments: {
+      lineComment: '//',
+    },
+    brackets: [
+      ['{', '}'],
+      ['[', ']'],
+      ['(', ')'],
+    ],
+    autoClosingPairs: [
+      { open: '{', close: '}' },
+      { open: '[', close: ']' },
+      { open: '(', close: ')' },
+      { open: '"', close: '"' },
+      { open: "'", close: "'" },
+    ],
+    surroundingPairs: [
+      { open: '{', close: '}' },
+      { open: '[', close: ']' },
+      { open: '(', close: ')' },
+      { open: '"', close: '"' },
+      { open: "'", close: "'" },
+    ],
+  });
+
   monaco.languages.setMonarchTokensProvider('erd', {
     defaultToken: '',
     tokenPostfix: '.erd',
