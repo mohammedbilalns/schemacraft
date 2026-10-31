@@ -19,6 +19,21 @@ export default defineConfig(() => ({
     globals: true,
     setupFiles: ["./src/test/setup.ts"],
   },
+  build: {
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('monaco-vim') || id.includes('monaco-editor')) {
+            return 'monaco-vendor';
+          }
+          if (id.includes('react') || id.includes('react-dom')) {
+            return 'react-vendor';
+          }
+        },
+      },
+    },
+  },
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
