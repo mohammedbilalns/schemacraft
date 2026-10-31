@@ -8,7 +8,6 @@ export function useProject(onLog: (msg: string, level?: 'info' | 'success' | 'wa
   });
   const [files, setFiles] = useState<ErdFileInfo[]>([]);
   const [activeFilePath, setActiveFilePath] = useState<string | null>(null);
-  const [isCombinedMode, setIsCombinedMode] = useState<boolean>(false);
 
   const [gitStatus, setGitStatus] = useState<GitStatusInfo>({
     is_repo: false,
@@ -75,7 +74,6 @@ export function useProject(onLog: (msg: string, level?: 'info' | 'success' | 'wa
       const newFile = await tauri.createFile(currentDir, name, content);
       setFiles((prev) => [...prev, newFile]);
       setActiveFilePath(newFile.path);
-      setIsCombinedMode(false);
       onLog(`Created diagram: ${name}`, 'success');
       await refreshGit();
     } catch (err) {
@@ -104,8 +102,6 @@ export function useProject(onLog: (msg: string, level?: 'info' | 'success' | 'wa
     setFiles,
     activeFilePath,
     setActiveFilePath,
-    isCombinedMode,
-    setIsCombinedMode,
     gitStatus,
     branches,
     commits,

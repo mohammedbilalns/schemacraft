@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FilePlus, Layers, ChevronRight, Combine } from 'lucide-react';
+import { FilePlus, Layers, ChevronRight } from 'lucide-react';
 import { ErdFileInfo } from '../types/erd';
 import { SidebarHeader } from './SidebarHeader';
 import { SidebarFileList } from './SidebarFileList';
@@ -12,8 +12,6 @@ interface SidebarProps {
   onCreateFile: (name: string) => void;
   onDeleteFile: (path: string) => void;
   onOpenDirectory: () => void;
-  isCombinedMode: boolean;
-  onToggleCombinedMode: () => void;
   isOpen: boolean;
   onToggleOpen: () => void;
 }
@@ -26,8 +24,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onCreateFile,
   onDeleteFile,
   onOpenDirectory,
-  isCombinedMode,
-  onToggleCombinedMode,
   isOpen,
   onToggleOpen,
 }) => {
@@ -64,22 +60,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         onToggleOpen={onToggleOpen}
       />
 
-      <div className="p-2 space-y-1 border-b border-[#24262f]">
-        <button
-          onClick={onToggleCombinedMode}
-          className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded text-xs transition-colors cursor-pointer ${
-            isCombinedMode
-              ? 'bg-blue-600/30 text-blue-300 border border-blue-500/50 font-medium'
-              : 'hover:bg-white/5 text-gray-400 hover:text-gray-200'
-          }`}
-          title="Combine all ERD files in this project into one diagram"
-        >
-          <Combine size={14} className="text-blue-400" />
-          <span>Combine All Diagrams</span>
-        </button>
-      </div>
-
-      <div className="px-3 py-2 flex items-center justify-between text-[11px] font-semibold text-gray-400 tracking-wider uppercase">
+      <div className="px-3 py-2 flex items-center justify-between text-[11px] font-semibold text-gray-400 tracking-wider uppercase border-t border-[#24262f]">
         <div className="flex items-center gap-1.5">
           <Layers size={13} />
           <span>Active Diagrams ({files.length})</span>
@@ -124,7 +105,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <SidebarFileList
         files={files}
         activeFile={activeFile}
-        isCombinedMode={isCombinedMode}
         onSelectFile={onSelectFile}
         onDeleteFile={onDeleteFile}
         onRequestCreate={() => setIsCreating(true)}

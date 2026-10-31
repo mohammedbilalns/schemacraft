@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { ErdSchema, ErdTable, ErdError, ErdFileInfo } from '../types/erd';
-import { parseErd, mergeSchemas } from '../erd/parser';
+import { parseErd } from '../erd/parser';
 import { calculateLayout } from '../erd/layout';
 import { SAMPLE_ERD_CODE } from '../erd/sampleCode';
 import { useDebounce } from './useDebounce';
@@ -9,11 +9,10 @@ import * as tauri from '../utils/tauriClient';
 export function useErdState(
   activeFile: ErdFileInfo | null,
   files: ErdFileInfo[],
-  isCombinedMode: boolean,
   onLog: (msg: string, level?: 'info' | 'success' | 'warn' | 'error') => void,
   onGitRefresh: () => void
 ) {
-  const [code, setCode] = useState<string>(SAMPLE_ERD_CODE);
+  const [code, setCode] = useState<string>('');
   const [schema, setSchema] = useState<ErdSchema>({ tables: [], relations: [] });
   const [tables, setTables] = useState<ErdTable[]>([]);
   const [errors, setErrors] = useState<ErdError[]>([]);
@@ -22,48 +21,44 @@ export function useErdState(
   // Debounced code for responsive layout calculation while typing
   const debouncedCode = useDebounce(code, 180);
 
-  // Load code from active file or combined files immediately
+  // Load code from active file immediately
   useEffect(() => {
-    if (isCombinedMode) {
-      const combinedSchemas = files.map((f) => parseErd(f.content).schema);
-      const merged = mergeSchemas(combinedSchemas);
-      setSchema(merged);
-      const laidOut = calculateLayout(merged, positionsRef.current);
-      setTables(laidOut);
-      setErrors([]);
-      onLog(`Combined ${files.length} diagrams (${merged.tables.length} tables)`, 'info');
-    } else if (activeFile) {
+    if (activeFile) {
       setCode(activeFile.content);
       const { schema: s, errors: errs } = parseErd(activeFile.content);
       setSchema(s);
       setErrors(errs);
       setTables(calculateLayout(s, positionsRef.current));
     } else if (files.length === 0) {
-      setCode(SAMPLE_ERD_CODE);
-      const { schema: s, errors: errs } = parseErd(SAMPLE_ERD_CODE);
-      setSchema(s);
-      setErrors(errs);
-      setTables(calculateLayout(s, positionsRef.current));
+      setCode('');
+      setSchema({ tables: [], relations: [] });
+      setTables([]);
+      setErrors([]);
     }
-  }, [activeFile?.path, isCombinedMode, files.length]);
+  }, [activeFile?.path, files.length]);
 
   // Sane debouncing for layout computation during live typing
   useEffect(() => {
-    if (isCombinedMode) return;
+    if (!debouncedCode.trim()) {
+      setSchema({ tables: [], relations: [] });
+      setTables([]);
+      setErrors([]);
+      return;
+    }
     const { schema: parsedSchema, errors: parseErrors } = parseErd(debouncedCode);
     setSchema(parsedSchema);
     setErrors(parseErrors);
 
     const laidOut = calculateLayout(parsedSchema, positionsRef.current);
     setTables(laidOut);
-  }, [debouncedCode, isCombinedMode]);
+  }, [debouncedCode]);
 
   // Sane debounced auto-save to disk (450ms)
   const saveTimeoutRef = useRef<number | null>(null);
   const handleCodeChange = (newCode: string) => {
     setCode(newCode);
 
-    if (activeFile && !isCombinedMode) {
+    if (activeFile) {
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
       saveTimeoutRef.current = window.setTimeout(async () => {
         try {

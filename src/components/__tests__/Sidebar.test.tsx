@@ -19,8 +19,6 @@ describe('Sidebar Component', () => {
         onCreateFile={vi.fn()}
         onDeleteFile={vi.fn()}
         onOpenDirectory={vi.fn()}
-        isCombinedMode={false}
-        onToggleCombinedMode={vi.fn()}
         isOpen={true}
         onToggleOpen={vi.fn()}
       />
@@ -29,7 +27,6 @@ describe('Sidebar Component', () => {
     expect(screen.getByText('my-project')).toBeInTheDocument();
     expect(screen.getByText('users.erd')).toBeInTheDocument();
     expect(screen.getByText('orders.erd')).toBeInTheDocument();
-    expect(screen.getByText('Combine All Diagrams')).toBeInTheDocument();
   });
 
   it('handles selecting a file', () => {
@@ -43,8 +40,6 @@ describe('Sidebar Component', () => {
         onCreateFile={vi.fn()}
         onDeleteFile={vi.fn()}
         onOpenDirectory={vi.fn()}
-        isCombinedMode={false}
-        onToggleCombinedMode={vi.fn()}
         isOpen={true}
         onToggleOpen={vi.fn()}
       />
@@ -65,8 +60,6 @@ describe('Sidebar Component', () => {
         onCreateFile={handleCreate}
         onDeleteFile={vi.fn()}
         onOpenDirectory={vi.fn()}
-        isCombinedMode={false}
-        onToggleCombinedMode={vi.fn()}
         isOpen={true}
         onToggleOpen={vi.fn()}
       />

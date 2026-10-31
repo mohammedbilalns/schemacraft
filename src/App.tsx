@@ -36,7 +36,7 @@ export default function App() {
 
   const project = useProject(addLog);
   const activeFile = project.files.find((f) => f.path === project.activeFilePath) || null;
-  const erd = useErdState(activeFile, project.files, project.isCombinedMode, addLog, project.refreshGit);
+  const erd = useErdState(activeFile, project.files, addLog, project.refreshGit);
   const notesHook = useNotes(project.currentDir, activeFile?.name || 'schema.erd', currentUser, addLog, project.refreshGit);
   const notesUI = useNotesUI();
 
@@ -114,14 +114,11 @@ export default function App() {
           files={project.files}
           activeFile={project.activeFilePath}
           onSelectFile={(path) => {
-            project.setIsCombinedMode(false);
             project.setActiveFilePath(path);
           }}
           onCreateFile={project.createDiagramFile}
           onDeleteFile={project.deleteDiagramFile}
           onOpenDirectory={project.selectNewDirectory}
-          isCombinedMode={project.isCombinedMode}
-          onToggleCombinedMode={() => project.setIsCombinedMode(!project.isCombinedMode)}
           isOpen={isSidebarOpen}
           onToggleOpen={() => setIsSidebarOpen(!isSidebarOpen)}
         />
@@ -160,7 +157,7 @@ export default function App() {
           errors={erd.errors}
           isOpen={isEditorOpen}
           onClose={() => setIsEditorOpen(false)}
-          fileName={project.isCombinedMode ? 'All Diagrams (Combined)' : activeFile?.name || 'schema.erd'}
+          fileName={activeFile?.name || 'schema.erd'}
           targetLine={editorTargetLine}
         />
       </div>

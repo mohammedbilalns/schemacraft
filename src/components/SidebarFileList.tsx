@@ -5,7 +5,6 @@ import { ErdFileInfo } from '../types/erd';
 interface SidebarFileListProps {
   files: ErdFileInfo[];
   activeFile: string | null;
-  isCombinedMode: boolean;
   onSelectFile: (path: string) => void;
   onDeleteFile: (path: string) => void;
   onRequestCreate: () => void;
@@ -14,7 +13,6 @@ interface SidebarFileListProps {
 export const SidebarFileList: React.FC<SidebarFileListProps> = ({
   files,
   activeFile,
-  isCombinedMode,
   onSelectFile,
   onDeleteFile,
   onRequestCreate,
@@ -37,7 +35,7 @@ export const SidebarFileList: React.FC<SidebarFileListProps> = ({
   return (
     <div className="flex-1 overflow-y-auto px-2 py-1 space-y-0.5">
       {files.map((file) => {
-        const isActive = !isCombinedMode && activeFile === file.path;
+        const isActive = activeFile === file.path;
         return (
           <div
             key={file.path}
