@@ -28,37 +28,34 @@ jobs:
       - name: Rust cache
         uses: swatinem/rust-cache@v2
         with:
-          workspaces: eraser-offline/src-tauri
+          workspaces: '**/src-tauri'
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10
+          version: 12
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
-          cache-dependency-path: eraser-offline/pnpm-lock.yaml
+          cache-dependency-path: '**/pnpm-lock.yaml'
 
       - name: Install dependencies
-        working-directory: eraser-offline
         run: pnpm install
 
       - name: Run unit tests
-        working-directory: eraser-offline
         run: pnpm test
 
       - name: Build frontend & AppImage
-        working-directory: eraser-offline
         run: pnpm tauri build --bundles appimage
 
       - name: Upload Linux AppImage Artifact
         uses: actions/upload-artifact@v4
         with:
           name: SchemaCraft-Linux-AppImage
-          path: eraser-offline/src-tauri/target/release/bundle/appimage/*.AppImage
+          path: '**/src-tauri/target/release/bundle/appimage/*.AppImage'
           if-no-files-found: error
 
   build-windows:
@@ -74,35 +71,32 @@ jobs:
       - name: Rust cache
         uses: swatinem/rust-cache@v2
         with:
-          workspaces: eraser-offline/src-tauri
+          workspaces: '**/src-tauri'
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10
+          version: 12
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
-          cache-dependency-path: eraser-offline/pnpm-lock.yaml
+          cache-dependency-path: '**/pnpm-lock.yaml'
 
       - name: Install dependencies
-        working-directory: eraser-offline
         run: pnpm install
 
       - name: Run unit tests
-        working-directory: eraser-offline
         run: pnpm test
 
       - name: Build Windows NSIS (.exe)
-        working-directory: eraser-offline
         run: pnpm tauri build --bundles nsis
 
       - name: Upload Windows Executable Artifact
         uses: actions/upload-artifact@v4
         with:
           name: SchemaCraft-Windows-Installer
-          path: eraser-offline/src-tauri/target/release/bundle/nsis/*setup.exe
+          path: '**/src-tauri/target/release/bundle/nsis/*setup.exe'
           if-no-files-found: warn
