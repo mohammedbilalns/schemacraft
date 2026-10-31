@@ -12,11 +12,12 @@
   "app": {
     "windows": [
       {
-        "title": "Eraser ERD - Offline API Docs",
+        "title": "SchemaCraft - Visual ERD & API Docs",
         "width": 1400,
         "height": 900,
         "minWidth": 960,
-        "minHeight": 640
+        "minHeight": 640,
+        "zoomHotkeysEnabled": false
       }
     ],
     "security": {

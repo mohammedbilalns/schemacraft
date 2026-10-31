@@ -3,8 +3,45 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tauri + React + Typescript</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>SchemaCraft</title>
+    <script>
+      // Prevent browser-level window zooming across the entire app
+      window.addEventListener('wheel', (e) => {
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+        }
+      }, { passive: false, capture: true });
+
+      window.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
+          e.preventDefault();
+        }
+      }, { capture: true });
+
+      document.addEventListener('gesturestart', (e) => e.preventDefault(), { passive: false, capture: true });
+      document.addEventListener('gesturechange', (e) => e.preventDefault(), { passive: false, capture: true });
+      document.addEventListener('gestureend', (e) => e.preventDefault(), { passive: false, capture: true });
+
+      // Prevent multi-touch gesture from zooming the whole window outside canvas
+      window.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches.length > 1) {
+          const canvas = document.getElementById('erd-canvas-svg');
+          if (!canvas || !canvas.contains(e.target)) {
+            e.preventDefault();
+          }
+        }
+      }, { passive: false, capture: true });
+
+      window.addEventListener('touchmove', (e) => {
+        if (e.touches && e.touches.length > 1) {
+          const canvas = document.getElementById('erd-canvas-svg');
+          if (!canvas || !canvas.contains(e.target)) {
+            e.preventDefault();
+          }
+        }
+      }, { passive: false, capture: true });
+    </script>
   </head>
 
   <body>
