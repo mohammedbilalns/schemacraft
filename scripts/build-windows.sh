@@ -9,7 +9,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if [ -f "${SCRIPT_DIR}/../package.json" ]; then
   PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 else
-  PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../eraser-offline" && pwd)"
+  PROJECT_ROOT="$(pwd)"
 fi
 
 cd "${PROJECT_ROOT}"

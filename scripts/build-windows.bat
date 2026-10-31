@@ -3,7 +3,11 @@ echo ==============================================
 echo  Building SchemaCraft Windows (.exe) Package  
 echo ==============================================
 
-cd /d "%~dp0\..\eraser-offline"
+if exist "%~dp0package.json" (
+    cd /d "%~dp0"
+) else (
+    cd /d "%~dp0\.."
+)
 
 echo 1. Installing dependencies...
 call pnpm install

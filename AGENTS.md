@@ -6,7 +6,7 @@
 
 ## 2. Project Overview & Branding
 - **Name**: SchemaCraft (Visual ERD & API Docs Studio).
-- **Branding Rule**: Do NOT use the name "eraser" anywhere in the app UI, branding, window titles, or user-facing text. Keep the folder name `eraser-offline` unchanged as requested.
+- **Branding Rule**: SchemaCraft is the official branding across all app UI, configs, window titles, and user-facing text.
 - **Architecture**: Local-first desktop app built with Tauri v2 + React 19 + TypeScript + Vite + Tailwind CSS.
 
 ## 3. Core Features & User Requirements

@@ -971,20 +971,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "eraser-offline"
-version = "0.1.0"
-dependencies = [
- "base64 0.22.1",
- "rfd",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "tauri-plugin-opener",
- "webkit2gtk",
-]
-
-[[package]]
 name = "errno"
 version = "0.3.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2968,6 +2954,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "93fc1dc3aaa9bfed95e02e6eadabb4baf7e3078b0bd1b4d7b6b0b68378900502"
 dependencies = [
  "winapi-util",
+]
+
+[[package]]
+name = "schemacraft"
+version = "0.1.0"
+dependencies = [
+ "base64 0.22.1",
+ "rfd",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-opener",
+ "webkit2gtk",
 ]
 
 [[package]]

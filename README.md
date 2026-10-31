@@ -8,7 +8,7 @@ Built with **Tauri v2**, **React 19**, **TypeScript**, **Monaco Editor**, and **
 
 ## ✨ Features
 
-- **Code-Driven ERDs**: Define models with intuitive Eraser-compatible syntax: `tableName [icon: user, color: blue] { field type modifiers }` and `table1.col < table2.col`.
+- **Code-Driven ERDs**: Define models with intuitive SchemaCraft syntax: `tableName [icon: user, color: blue] { field type modifiers }` and `table1.col < table2.col`.
 - **Integrated Monaco Editor**: Real-time syntax highlighting for tables, attributes, fields, types, and relations. Accurate cursor tracking with 180ms debounced graph parsing.
 - **Interactive Canvas**: Obsidian dark theme, auto-layout powered by Dagre, Manhattan orthogonal connectors with rounded corners and cardinality badges (`1` and `*`).
 - **Click-to-Code Jump**: Click any table card or column row to open the editor and jump directly to its definition line.
@@ -64,16 +64,13 @@ sudo pacman -S --needed webkit2gtk-4.1 base-devel curl wget
 ## 💻 Development
 
 ```bash
-# 1. Navigate to the app directory
-cd eraser-offline
-
-# 2. Install dependencies
+# 1. Install dependencies
 pnpm install
 
-# 3. Run unit tests
+# 2. Run unit tests
 pnpm test
 
-# 4. Start the desktop app in development mode
+# 3. Start the desktop app in development mode
 pnpm tauri dev
 ```
 
@@ -83,21 +80,19 @@ pnpm tauri dev
 
 ### Linux AppImage
 ```bash
-cd eraser-offline
 pnpm run build:appimage
-# Or run the root script:
+# Or run the script:
 ./scripts/build-appimage.sh
 ```
-*Output: `eraser-offline/src-tauri/target/release/bundle/appimage/*.AppImage`*
+*Output: `src-tauri/target/release/bundle/appimage/*.AppImage`*
 
 ### Windows Installer (.exe)
 ```bash
-cd eraser-offline
 pnpm run build:windows
 # Or on Windows cmd:
 scripts\build-windows.bat
 ```
-*Output: `eraser-offline/src-tauri/target/release/bundle/nsis/*-setup.exe`*
+*Output: `src-tauri/target/release/bundle/nsis/*-setup.exe`*
 
 ### GitHub Actions CI/CD
 Automated builds are configured in `.github/workflows/build-and-release.yml` to compile and publish Linux AppImages and Windows installers on every push or tag release.
@@ -107,7 +102,6 @@ Automated builds are configured in `.github/workflows/build-and-release.yml` to 
 ## 🧪 Testing
 
 ```bash
-cd eraser-offline
 pnpm test
 ```
 Runs 18 test suites containing **40 unit tests** via Vitest covering the parser, layout router, Monaco editor, notes system, canvas, and Git integration.

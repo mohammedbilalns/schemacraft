@@ -38,7 +38,7 @@ fn collect_erd_files(
                 let _ = collect_erd_files(root, &path, files, depth + 1);
             } else if path.is_file() {
                 let is_erd_file = name.ends_with(".erd")
-                    || name.ends_with(".eraser")
+                    || name.ends_with(".schema")
                     || name.ends_with(".md")
                     || name.ends_with(".txt");
 

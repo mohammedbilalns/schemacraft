@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "eraser-offline",
+  "productName": "schemacraft",
   "version": "0.1.0",
-  "identifier": "com.bilalnsmuhammed.eraser-offline",
+  "identifier": "com.bilalnsmuhammed.schemacraft",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "devUrl": "http://localhost:1420",
