@@ -17,7 +17,7 @@ interface TableNodeProps {
   onOpenNotes?: (targetType: 'table' | 'field', tableName: string, fieldName?: string) => void;
 }
 
-export const TableNode: React.FC<TableNodeProps> = ({
+export const TableNode: React.FC<TableNodeProps> = React.memo(({
   table,
   isSelected,
   selectedField,
@@ -164,4 +164,4 @@ export const TableNode: React.FC<TableNodeProps> = ({
       })}
     </g>
   );
-};
+});

@@ -16,7 +16,7 @@ interface SidebarProps {
   onToggleOpen: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({
+export const Sidebar: React.FC<SidebarProps> = React.memo(({
   currentDir,
   files,
   activeFile,
@@ -116,4 +116,4 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
     </div>
   );
-};
+});

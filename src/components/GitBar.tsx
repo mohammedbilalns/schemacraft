@@ -32,7 +32,7 @@ interface GitBarProps {
   onToggleEditor: () => void;
 }
 
-export const GitBar: React.FC<GitBarProps> = ({
+export const GitBar: React.FC<GitBarProps> = React.memo(({
   status,
   onOpenBranchModal,
   onOpenCommitModal,
@@ -181,4 +181,4 @@ export const GitBar: React.FC<GitBarProps> = ({
       </div>
     </header>
   );
-};
+});

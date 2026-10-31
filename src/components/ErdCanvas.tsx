@@ -25,7 +25,7 @@ interface ErdCanvasProps {
   onOpenNotes?: (targetType: 'table' | 'field', tableName: string, fieldName?: string) => void;
 }
 
-export const ErdCanvas: React.FC<ErdCanvasProps> = ({
+export const ErdCanvas: React.FC<ErdCanvasProps> = React.memo(({
   tables,
   schema,
   onTablesChange,
@@ -180,4 +180,4 @@ export const ErdCanvas: React.FC<ErdCanvasProps> = ({
       )}
     </div>
   );
-};
+});

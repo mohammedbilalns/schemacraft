@@ -9,7 +9,7 @@ interface RelationEdgeProps {
   isHighlighted: boolean;
 }
 
-export const RelationEdge: React.FC<RelationEdgeProps> = ({
+export const RelationEdge: React.FC<RelationEdgeProps> = React.memo(({
   relation,
   srcTable,
   tgtTable,
@@ -79,4 +79,4 @@ export const RelationEdge: React.FC<RelationEdgeProps> = ({
       </text>
     </g>
   );
-};
+});

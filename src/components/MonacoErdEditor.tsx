@@ -27,6 +27,7 @@ export const MonacoErdEditor: React.FC<MonacoErdEditorProps> = ({
   const monacoRef = useRef<any>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const vimModeRef = useRef<any>(null);
+  const internalValueRef = useRef(code);
 
   const handleMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;
@@ -41,6 +42,23 @@ export const MonacoErdEditor: React.FC<MonacoErdEditorProps> = ({
         // ignore in environments without full DOM support
       }
     }
+  };
+
+  // Sync external code changes only (e.g. file switch, git review)
+  useEffect(() => {
+    if (editorRef.current && code !== internalValueRef.current) {
+      internalValueRef.current = code;
+      const model = editorRef.current.getModel();
+      if (model && model.getValue() !== code) {
+        editorRef.current.setValue(code);
+      }
+    }
+  }, [code]);
+
+  const handleEditorChange = (val: string | undefined) => {
+    const next = val || '';
+    internalValueRef.current = next;
+    onChange(next);
   };
 
   useEffect(() => {
@@ -103,8 +121,8 @@ export const MonacoErdEditor: React.FC<MonacoErdEditorProps> = ({
       height="100%"
       language="erd"
       theme="schemacraft-dark"
-      value={code}
-      onChange={(val) => onChange(val || '')}
+      defaultValue={code}
+      onChange={handleEditorChange}
       onMount={handleMount}
       options={{
         fontSize: 13,
@@ -120,9 +138,10 @@ export const MonacoErdEditor: React.FC<MonacoErdEditorProps> = ({
         autoClosingDelete: 'always',
         autoClosingOvertype: 'always',
         matchBrackets: 'always',
-        renderLineHighlight: 'all',
-        cursorBlinking: 'smooth',
-        cursorSmoothCaretAnimation: 'on',
+        renderLineHighlight: 'line',
+        cursorBlinking: 'blink',
+        cursorSmoothCaretAnimation: 'off',
+        quickSuggestions: false,
         padding: { top: 12, bottom: 12 },
       }}
     />
