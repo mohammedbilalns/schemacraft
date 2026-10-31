@@ -27,6 +27,7 @@ export default function App() {
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<GitUserConfig>({ name: '', email: '' });
+  const [exportSavedPath, setExportSavedPath] = useState<string | null>(null);
 
   const addLog = useCallback((msg: string, level: 'info' | 'success' | 'warn' | 'error' = 'info') => {
     const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -70,13 +71,15 @@ export default function App() {
   const handleExportPng = async () => {
     try {
       addLog('Exporting diagram to PNG...', 'info');
-      const result = await exportDiagramAsPng(erd.tables, {
-        filename: activeFile ? `${activeFile.name.replace(/\.[^.]+$/, '')}.png` : 'erd-diagram.png',
-      });
+      const baseName = activeFile ? activeFile.name.replace(/\.[^.]+$/, '') : 'diagram';
+      const result = await exportDiagramAsPng(erd.tables, { filename: `${baseName}.png` });
+      let saved = `${project.currentDir}/${baseName}.${result.isPng ? 'png' : 'svg'}`;
       if (project.currentDir) {
-        await tauri.saveDiagramPng(project.currentDir, result.isPng ? 'diagram-export.png' : 'diagram-export.svg', result.dataUrl).catch(() => {});
+        const p = await tauri.saveDiagramPng(project.currentDir, `${baseName}.${result.isPng ? 'png' : 'svg'}`, result.dataUrl).catch(() => null);
+        if (p) saved = p;
       }
-      addLog(result.isPng ? 'Diagram exported as PNG!' : 'Diagram exported as SVG vector!', 'success');
+      setExportSavedPath(saved);
+      addLog(`Diagram saved to: ${saved}`, 'success');
     } catch (err) {
       addLog(`Export failed: ${err}`, 'error');
     }
@@ -180,6 +183,8 @@ export default function App() {
         setIsHistoryModalOpen={setIsHistoryModalOpen}
         isOnboardingOpen={isOnboardingOpen}
         setIsOnboardingOpen={setIsOnboardingOpen}
+        exportSavedPath={exportSavedPath}
+        onCloseExportToast={() => setExportSavedPath(null)}
         addLog={addLog}
       />
     </div>

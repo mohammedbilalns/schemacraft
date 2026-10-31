@@ -5,7 +5,6 @@ import {
   History,
   Download,
   ScrollText,
-  Sparkles,
   CheckCircle,
   AlertCircle,
   FolderSync,
@@ -45,9 +44,7 @@ export const GitBar: React.FC<GitBarProps> = ({
       {/* Brand & Workspace */}
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-md">
-            <Sparkles size={14} className="text-white" />
-          </div>
+          <img src="/favicon.png" alt="SchemaCraft Logo" className="w-6 h-6 rounded-md shadow-md object-cover" />
           <span className="font-bold text-sm text-gray-100 tracking-tight">SchemaCraft</span>
         </div>
 
