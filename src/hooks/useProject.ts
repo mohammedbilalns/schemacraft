@@ -3,9 +3,7 @@ import { ErdFileInfo, GitStatusInfo, GitCommitInfo } from '../types/erd';
 import * as tauri from '../utils/tauriClient';
 
 export function useProject(onLog: (msg: string, level?: 'info' | 'success' | 'warn' | 'error') => void) {
-  const [currentDir, setCurrentDir] = useState<string>(() => {
-    return localStorage.getItem('schemacraft_project_dir') || '/home/bilalnsmuhammed/draw-db/examples';
-  });
+  const [currentDir, setCurrentDir] = useState<string>('');
   const [files, setFiles] = useState<ErdFileInfo[]>([]);
   const [activeFilePath, setActiveFilePath] = useState<string | null>(null);
 
@@ -71,7 +69,14 @@ export function useProject(onLog: (msg: string, level?: 'info' | 'success' | 'wa
 
   const createDiagramFile = async (name: string, content?: string) => {
     try {
-      const newFile = await tauri.createFile(currentDir, name, content);
+      let targetDir = currentDir;
+      if (!targetDir) {
+        const selected = await tauri.selectDirectory();
+        if (!selected) return;
+        targetDir = selected;
+        await loadProject(selected);
+      }
+      const newFile = await tauri.createFile(targetDir, name, content);
       setFiles((prev) => [...prev, newFile]);
       setActiveFilePath(newFile.path);
       onLog(`Created diagram: ${name}`, 'success');

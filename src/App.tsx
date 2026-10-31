@@ -3,7 +3,9 @@ import { LogEntry, GitUserConfig } from './types/erd';
 import { GitBar } from './components/GitBar';
 import { Sidebar } from './components/Sidebar';
 import { ErdCanvas } from './components/ErdCanvas';
+import { EmptyCanvasState } from './components/EmptyCanvasState';
 import { CodeEditor } from './components/CodeEditor';
+import { SAMPLE_ERD_CODE } from './erd/sampleCode';
 import { LogDrawer } from './components/LogDrawer';
 import { AppModalsContainer } from './components/AppModalsContainer';
 import { useProject } from './hooks/useProject';
@@ -49,19 +51,18 @@ export default function App() {
 
   const handleTableClick = (tName: string | null) => {
     setSelectedTable(tName);
-    const table = tName ? erd.tables.find((t) => t.name.toLowerCase() === tName.toLowerCase()) : null;
-    if (table?.lineNumber) {
+    const line = tName ? erd.tables.find((t) => t.name.toLowerCase() === tName.toLowerCase())?.lineNumber : null;
+    if (line) {
       setIsEditorOpen(true);
-      setEditorTargetLine(table.lineNumber);
+      setEditorTargetLine(line);
     }
   };
 
   const handleFieldClick = (sel: { tableName: string; fieldName: string } | null) => {
     setSelectedField(sel);
     if (!sel) return;
-    const table = erd.tables.find((t) => t.name.toLowerCase() === sel.tableName.toLowerCase());
-    const field = table?.fields.find((f) => f.name.toLowerCase() === sel.fieldName.toLowerCase());
-    const line = field?.lineNumber || table?.lineNumber;
+    const t = erd.tables.find((tbl) => tbl.name.toLowerCase() === sel.tableName.toLowerCase());
+    const line = t?.fields.find((f) => f.name.toLowerCase() === sel.fieldName.toLowerCase())?.lineNumber || t?.lineNumber;
     if (line) {
       setIsEditorOpen(true);
       setEditorTargetLine(line);
@@ -136,26 +137,32 @@ export default function App() {
             isEditorOpen={isEditorOpen}
             onToggleEditor={() => setIsEditorOpen(!isEditorOpen)}
             getTableNotesCount={(tName) => notesHook.getTableNotes(tName).length}
-            getFieldNotesMap={(tName) => {
-              const res: Record<string, number> = {};
-              const tbl = erd.tables.find((t) => t.name.toLowerCase() === tName.toLowerCase());
-              tbl?.fields.forEach((f) => {
-                const count = notesHook.getFieldNotes(tName, f.name).length;
-                if (count > 0) res[f.name.toLowerCase()] = count;
-              });
-              return res;
-            }}
+            getFieldNotesMap={(tName) =>
+              (erd.tables.find((t) => t.name.toLowerCase() === tName.toLowerCase())?.fields || []).reduce<Record<string, number>>((acc, f) => {
+                const c = notesHook.getFieldNotes(tName, f.name).length;
+                if (c > 0) acc[f.name.toLowerCase()] = c;
+                return acc;
+              }, {})
+            }
             onContextMenuTable={(e, tName) => notesUI.openTableContextMenu(e, tName, notesHook.getTableNotes(tName).length)}
             onContextMenuField={(e, tName, fName) => notesUI.openFieldContextMenu(e, tName, fName, notesHook.getFieldNotes(tName, fName).length)}
             onOpenNotes={(type, tName, fName) => notesUI.setActiveNoteTarget({ targetType: type, tableName: tName, fieldName: fName })}
           />
+          {(!project.currentDir || (!activeFile && project.files.length === 0)) && (
+            <EmptyCanvasState
+              currentDir={project.currentDir}
+              hasFiles={project.files.length > 0}
+              onOpenDirectory={project.selectNewDirectory}
+              onCreateFile={() => project.createDiagramFile('schema.erd', SAMPLE_ERD_CODE)}
+            />
+          )}
         </main>
 
         <CodeEditor
           code={erd.code}
           onChange={erd.handleCodeChange}
           errors={erd.errors}
-          isOpen={isEditorOpen}
+          isOpen={isEditorOpen && !!activeFile}
           onClose={() => setIsEditorOpen(false)}
           fileName={activeFile?.name || 'schema.erd'}
           targetLine={editorTargetLine}

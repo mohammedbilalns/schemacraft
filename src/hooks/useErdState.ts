@@ -2,7 +2,6 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { ErdSchema, ErdTable, ErdError, ErdFileInfo } from '../types/erd';
 import { parseErd } from '../erd/parser';
 import { calculateLayout } from '../erd/layout';
-import { SAMPLE_ERD_CODE } from '../erd/sampleCode';
 import { useDebounce } from './useDebounce';
 import * as tauri from '../utils/tauriClient';
 
