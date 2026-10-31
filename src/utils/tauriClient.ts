@@ -115,3 +115,28 @@ export async function gitSetUserConfig(dirPath: string, name: string, email: str
   if (!isTauri()) return;
   return invoke<void>('git_set_user_config', { dirPath, name, email });
 }
+
+export async function gitPull(dirPath: string): Promise<string> {
+  if (!isTauri()) return 'Already up to date.';
+  return invoke<string>('git_pull', { dirPath });
+}
+
+export async function gitGetRemotes(dirPath: string): Promise<string[]> {
+  if (!isTauri()) return ['origin'];
+  return invoke<string[]>('git_get_remotes', { dirPath });
+}
+
+export async function gitAddRemote(dirPath: string, name: string, url: string): Promise<string> {
+  if (!isTauri()) return `Added remote ${name}`;
+  return invoke<string>('git_add_remote', { dirPath, name, url });
+}
+
+export async function gitPush(
+  dirPath: string,
+  remote?: string,
+  branch?: string,
+  setUpstream?: boolean
+): Promise<string> {
+  if (!isTauri()) return 'Pushed changes to remote.';
+  return invoke<string>('git_push', { dirPath, remote, branch, setUpstream });
+}

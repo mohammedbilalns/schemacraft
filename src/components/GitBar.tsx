@@ -9,6 +9,8 @@ import {
   AlertCircle,
   FolderSync,
   Code2,
+  ArrowDown,
+  ArrowUp,
 } from 'lucide-react';
 import { GitStatusInfo } from '../types/erd';
 
@@ -19,6 +21,10 @@ interface GitBarProps {
   onOpenHistoryModal: () => void;
   onInitGit: () => void;
   onRefreshProject: () => void;
+  onPull?: () => void;
+  onPush?: () => void;
+  isPulling?: boolean;
+  isPushing?: boolean;
   onExportPng: () => void;
   onToggleLog: () => void;
   isLogOpen: boolean;
@@ -33,6 +39,10 @@ export const GitBar: React.FC<GitBarProps> = ({
   onOpenHistoryModal,
   onInitGit,
   onRefreshProject,
+  onPull,
+  onPush,
+  isPulling = false,
+  isPushing = false,
   onExportPng,
   onToggleLog,
   isLogOpen,
@@ -93,6 +103,26 @@ export const GitBar: React.FC<GitBarProps> = ({
             >
               <GitCommit size={13} />
               <span>Commit</span>
+            </button>
+
+            <button
+              onClick={onPull}
+              disabled={isPulling}
+              className="flex items-center gap-1 px-2 py-1 hover:bg-white/10 text-gray-300 hover:text-white rounded text-xs transition-colors cursor-pointer disabled:opacity-40"
+              title="Pull latest changes from remote repository"
+            >
+              <ArrowDown size={13} className={isPulling ? 'animate-bounce text-blue-400' : ''} />
+              <span>{isPulling ? 'Pulling...' : 'Pull'}</span>
+            </button>
+
+            <button
+              onClick={onPush}
+              disabled={isPushing}
+              className="flex items-center gap-1 px-2 py-1 hover:bg-white/10 text-gray-300 hover:text-white rounded text-xs transition-colors cursor-pointer disabled:opacity-40"
+              title="Push changes to remote repository"
+            >
+              <ArrowUp size={13} className={isPushing ? 'animate-bounce text-blue-400' : ''} />
+              <span>{isPushing ? 'Pushing...' : 'Push'}</span>
             </button>
 
             <button

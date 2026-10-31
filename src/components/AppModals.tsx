@@ -4,6 +4,7 @@ import { BranchModal } from './BranchModal';
 import { CommitModal } from './CommitModal';
 import { HistoryModal } from './HistoryModal';
 import { OnboardingModal } from './OnboardingModal';
+import { RemoteRepoModal } from './RemoteRepoModal';
 import { NoteDialog } from './NoteDialog';
 import { ContextMenu, ContextMenuTarget } from './ContextMenu';
 
@@ -28,6 +29,11 @@ interface AppModalsProps {
   onCloseOnboarding: () => void;
   currentUser: GitUserConfig;
   onSaveUserConfig: (config: GitUserConfig) => void;
+
+  isRemoteModalOpen?: boolean;
+  onCloseRemoteModal?: () => void;
+  onAddRemoteAndPush?: (name: string, url: string) => Promise<void>;
+  isPushingRemote?: boolean;
 
   contextMenuTarget: ContextMenuTarget | null;
   onCloseContextMenu: () => void;
@@ -59,6 +65,10 @@ export const AppModals: React.FC<AppModalsProps> = ({
   onCloseOnboarding,
   currentUser,
   onSaveUserConfig,
+  isRemoteModalOpen = false,
+  onCloseRemoteModal = () => {},
+  onAddRemoteAndPush = async () => {},
+  isPushingRemote = false,
   contextMenuTarget,
   onCloseContextMenu,
   onContextMenuAddNote,
@@ -99,6 +109,13 @@ export const AppModals: React.FC<AppModalsProps> = ({
         onClose={onCloseOnboarding}
         initialConfig={currentUser}
         onSaveConfig={onSaveUserConfig}
+      />
+
+      <RemoteRepoModal
+        isOpen={isRemoteModalOpen}
+        onClose={onCloseRemoteModal}
+        onAddRemoteAndPush={onAddRemoteAndPush}
+        isLoading={isPushingRemote}
       />
 
       <ContextMenu

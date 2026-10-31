@@ -24,6 +24,10 @@ interface ModalsContainerProps {
   setIsHistoryModalOpen: (open: boolean) => void;
   isOnboardingOpen: boolean;
   setIsOnboardingOpen: (open: boolean) => void;
+  isRemoteModalOpen?: boolean;
+  setIsRemoteModalOpen?: (open: boolean) => void;
+  onAddRemoteAndPush?: (name: string, url: string) => Promise<void>;
+  isPushingRemote?: boolean;
   exportSavedPath: string | null;
   onCloseExportToast: () => void;
   addLog: (msg: string, level?: 'info' | 'success' | 'warn' | 'error') => void;
@@ -45,6 +49,10 @@ export const AppModalsContainer: React.FC<ModalsContainerProps> = ({
   setIsHistoryModalOpen,
   isOnboardingOpen,
   setIsOnboardingOpen,
+  isRemoteModalOpen = false,
+  setIsRemoteModalOpen = () => {},
+  onAddRemoteAndPush = async () => {},
+  isPushingRemote = false,
   exportSavedPath,
   onCloseExportToast,
   addLog,
@@ -95,6 +103,10 @@ export const AppModalsContainer: React.FC<ModalsContainerProps> = ({
           setIsOnboardingOpen(false);
           localStorage.setItem('schemacraft_onboarded', 'true');
         }}
+        isRemoteModalOpen={isRemoteModalOpen}
+        onCloseRemoteModal={() => setIsRemoteModalOpen(false)}
+        onAddRemoteAndPush={onAddRemoteAndPush}
+        isPushingRemote={isPushingRemote}
         currentUser={currentUser}
         onSaveUserConfig={async (cfg) => {
           setCurrentUser(cfg);

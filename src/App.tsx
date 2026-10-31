@@ -12,6 +12,7 @@ import { useProject } from './hooks/useProject';
 import { useErdState } from './hooks/useErdState';
 import { useNotes } from './hooks/useNotes';
 import { useNotesUI } from './hooks/useNotesUI';
+import { useGitRemote } from './hooks/useGitRemote';
 import { exportDiagramAsPng } from './utils/exportPng';
 import * as tauri from './utils/tauriClient';
 
@@ -41,6 +42,7 @@ export default function App() {
   const erd = useErdState(activeFile, project.files, addLog, project.refreshGit);
   const notesHook = useNotes(project.currentDir, activeFile?.name || 'schema.erd', currentUser, addLog, project.refreshGit);
   const notesUI = useNotesUI();
+  const gitRemote = useGitRemote(project.currentDir, project.gitStatus.is_repo, addLog, () => project.loadProject(project.currentDir));
 
   useEffect(() => {
     tauri.gitGetUserConfig(project.currentDir).then((cfg) => {
@@ -52,10 +54,7 @@ export default function App() {
   const handleTableClick = (tName: string | null) => {
     setSelectedTable(tName);
     const line = tName ? erd.tables.find((t) => t.name.toLowerCase() === tName.toLowerCase())?.lineNumber : null;
-    if (line) {
-      setIsEditorOpen(true);
-      setEditorTargetLine(line);
-    }
+    if (line) { setIsEditorOpen(true); setEditorTargetLine(line); }
   };
 
   const handleFieldClick = (sel: { tableName: string; fieldName: string } | null) => {
@@ -63,20 +62,17 @@ export default function App() {
     if (!sel) return;
     const t = erd.tables.find((tbl) => tbl.name.toLowerCase() === sel.tableName.toLowerCase());
     const line = t?.fields.find((f) => f.name.toLowerCase() === sel.fieldName.toLowerCase())?.lineNumber || t?.lineNumber;
-    if (line) {
-      setIsEditorOpen(true);
-      setEditorTargetLine(line);
-    }
+    if (line) { setIsEditorOpen(true); setEditorTargetLine(line); }
   };
 
   const handleExportPng = async () => {
     try {
       addLog('Exporting diagram to PNG...', 'info');
-      const baseName = activeFile ? activeFile.name.replace(/\.[^.]+$/, '') : 'diagram';
-      const result = await exportDiagramAsPng(erd.tables, { filename: `${baseName}.png` });
-      let saved = `${project.currentDir}/${baseName}.${result.isPng ? 'png' : 'svg'}`;
+      const base = activeFile ? activeFile.name.replace(/\.[^.]+$/, '') : 'diagram';
+      const res = await exportDiagramAsPng(erd.tables, { filename: `${base}.png` });
+      let saved = `${project.currentDir}/${base}.${res.isPng ? 'png' : 'svg'}`;
       if (project.currentDir) {
-        const p = await tauri.saveDiagramPng(project.currentDir, `${baseName}.${result.isPng ? 'png' : 'svg'}`, result.dataUrl).catch(() => null);
+        const p = await tauri.saveDiagramPng(project.currentDir, `${base}.${res.isPng ? 'png' : 'svg'}`, res.dataUrl).catch(() => null);
         if (p) saved = p;
       }
       setExportSavedPath(saved);
@@ -102,6 +98,10 @@ export default function App() {
           addLog('Initialized Git repository', 'success');
         }}
         onRefreshProject={() => project.loadProject(project.currentDir)}
+        onPull={gitRemote.handlePull}
+        onPush={gitRemote.handlePush}
+        isPulling={gitRemote.isPulling}
+        isPushing={gitRemote.isPushing}
         onExportPng={handleExportPng}
         onToggleLog={() => setIsLogOpen(!isLogOpen)}
         isLogOpen={isLogOpen}
@@ -114,9 +114,7 @@ export default function App() {
           currentDir={project.currentDir}
           files={project.files}
           activeFile={project.activeFilePath}
-          onSelectFile={(path) => {
-            project.setActiveFilePath(path);
-          }}
+          onSelectFile={project.setActiveFilePath}
           onCreateFile={project.createDiagramFile}
           onDeleteFile={project.deleteDiagramFile}
           onOpenDirectory={project.selectNewDirectory}
@@ -187,6 +185,10 @@ export default function App() {
         setIsHistoryModalOpen={setIsHistoryModalOpen}
         isOnboardingOpen={isOnboardingOpen}
         setIsOnboardingOpen={setIsOnboardingOpen}
+        isRemoteModalOpen={gitRemote.isRemoteModalOpen}
+        setIsRemoteModalOpen={gitRemote.setIsRemoteModalOpen}
+        onAddRemoteAndPush={gitRemote.handleAddRemoteAndPush}
+        isPushingRemote={gitRemote.isPushing}
         exportSavedPath={exportSavedPath}
         onCloseExportToast={() => setExportSavedPath(null)}
         addLog={addLog}

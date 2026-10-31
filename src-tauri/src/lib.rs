@@ -1,5 +1,6 @@
 pub mod models;
 pub mod git;
+pub mod git_remote;
 pub mod fs_ops;
 
 use git::{
@@ -7,6 +8,7 @@ use git::{
     git_history, git_init, git_show_file_at_commit, git_status,
     git_get_user_config, git_set_user_config,
 };
+use git_remote::{git_pull, git_push, git_get_remotes, git_add_remote};
 use fs_ops::{
     create_file, delete_file, read_file, save_diagram_png, scan_project,
     select_directory, write_file,
@@ -59,7 +61,11 @@ pub fn run() {
             git_history,
             git_show_file_at_commit,
             git_get_user_config,
-            git_set_user_config
+            git_set_user_config,
+            git_pull,
+            git_push,
+            git_get_remotes,
+            git_add_remote
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
