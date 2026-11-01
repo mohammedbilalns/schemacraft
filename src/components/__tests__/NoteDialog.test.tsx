@@ -11,8 +11,8 @@ describe('NoteDialog Component', () => {
       tableName: 'users',
       fieldName: 'email',
       content: 'Unique constraint required',
-      authorName: 'Bilal',
-      authorEmail: 'bilal@example.com',
+      authorName: 'Author',
+      authorEmail: 'author@example.com',
       createdAt: '2025-01-01T00:00:00.000Z',
     },
     {
@@ -37,7 +37,7 @@ describe('NoteDialog Component', () => {
         tableName="users"
         fieldName="email"
         notes={mockNotes}
-        currentUser={{ name: 'Bilal', email: 'bilal@example.com' }}
+        currentUser={{ name: 'Author', email: 'author@example.com' }}
         onAddNote={vi.fn()}
         onDeleteNote={handleDelete}
       />
@@ -47,11 +47,19 @@ describe('NoteDialog Component', () => {
     expect(screen.getByText('Unique constraint required')).toBeInTheDocument();
     expect(screen.getByText('Masked in public APIs')).toBeInTheDocument();
 
-    // Author Bilal has delete button on note-1
+    // Author has delete button on note-1
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
     const deleteBtn = screen.getByTitle('Delete note (author only)');
     expect(deleteBtn).toBeInTheDocument();
     fireEvent.click(deleteBtn);
+    expect(confirmSpy).toHaveBeenCalledWith('Are you sure you want to delete this note?');
     expect(handleDelete).toHaveBeenCalledWith('note-1');
+
+    // Canceling confirm does not trigger delete
+    confirmSpy.mockReturnValue(false);
+    fireEvent.click(deleteBtn);
+    expect(handleDelete).toHaveBeenCalledTimes(1);
+    confirmSpy.mockRestore();
 
     // Alex note is author protected
     expect(screen.getByText('Author protected')).toBeInTheDocument();
@@ -66,7 +74,7 @@ describe('NoteDialog Component', () => {
         targetType="table"
         tableName="orders"
         notes={[]}
-        currentUser={{ name: 'Bilal', email: 'bilal@example.com' }}
+        currentUser={{ name: 'Author', email: 'author@example.com' }}
         onAddNote={handleAdd}
         onDeleteNote={vi.fn()}
       />

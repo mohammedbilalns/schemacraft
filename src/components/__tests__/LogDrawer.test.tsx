@@ -24,9 +24,17 @@ describe('LogDrawer Component', () => {
     expect(screen.getByText('Project initialized')).toBeInTheDocument();
     expect(screen.getByText('Diagram saved')).toBeInTheDocument();
 
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
     const clearBtn = screen.getByText('Clear');
     fireEvent.click(clearBtn);
 
+    expect(confirmSpy).toHaveBeenCalledWith('Clear all activity logs?');
     expect(handleClear).toHaveBeenCalled();
+
+    // When cancelled, onClear is not called
+    confirmSpy.mockReturnValue(false);
+    fireEvent.click(clearBtn);
+    expect(handleClear).toHaveBeenCalledTimes(1);
+    confirmSpy.mockRestore();
   });
 });

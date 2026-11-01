@@ -28,7 +28,11 @@ export const LogDrawer: React.FC<LogDrawerProps> = ({
 
         <div className="flex items-center gap-2">
           <button
-            onClick={onClear}
+            onClick={() => {
+              if (logs.length > 0 && window.confirm('Clear all activity logs?')) {
+                onClear();
+              }
+            }}
             className="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] text-gray-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
             title="Clear Log"
           >

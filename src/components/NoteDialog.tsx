@@ -80,7 +80,11 @@ export const NoteDialog: React.FC<NoteDialogProps> = ({
 
                     {isAuthor ? (
                       <button
-                        onClick={() => onDeleteNote(note.id)}
+                        onClick={() => {
+                          if (window.confirm('Are you sure you want to delete this note?')) {
+                            onDeleteNote(note.id);
+                          }
+                        }}
                         className="p-1 hover:bg-red-950/60 text-gray-500 hover:text-red-400 rounded transition-colors cursor-pointer"
                         title="Delete note (author only)"
                       >

@@ -4,15 +4,27 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 // @ts-expect-error type error without @types/node package
 import process from "node:process";
+import path from "node:path";
 const host = process.env.TAURI_DEV_HOST;
 
 // https://vite.dev/config/
 export default defineConfig(() => ({
   plugins: [tailwindcss(), react()],
   resolve: {
-    alias: {
-      'monaco-editor/esm/vs/editor/editor.api': 'monaco-editor',
-    },
+    alias: [
+      {
+        find: 'monaco-editor/esm/vs/editor/editor.api',
+        replacement: path.resolve(process.cwd(), 'node_modules/monaco-editor/esm/vs/editor/editor.api.js'),
+      },
+      {
+        find: 'monaco-editor/esm/vs/editor/common/commands/shiftCommand',
+        replacement: path.resolve(process.cwd(), 'node_modules/monaco-editor/esm/vs/editor/common/commands/shiftCommand.js'),
+      },
+      {
+        find: /^monaco-editor$/,
+        replacement: path.resolve(process.cwd(), 'node_modules/monaco-editor/esm/vs/editor/editor.main.js'),
+      },
+    ],
   },
   test: {
     environment: "jsdom",

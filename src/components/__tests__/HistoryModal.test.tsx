@@ -5,7 +5,7 @@ import { GitCommitInfo } from '../../types/erd';
 
 describe('HistoryModal Component', () => {
   const mockCommits: GitCommitInfo[] = [
-    { hash: 'abc123456789', short_hash: 'abc1234', author: 'Bilal', date: '2025-01-01', message: 'Initial commit' },
+    { hash: 'abc123456789', short_hash: 'abc1234', author: 'Developer', date: '2025-01-01', message: 'Initial commit' },
   ];
 
   it('renders commit history and handles review action', () => {

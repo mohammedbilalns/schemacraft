@@ -23,6 +23,9 @@ importers:
       lucide-react:
         specifier: ^1.65.0
         version: 1.65.0(@types/react@19.3.0)(react@19.3.1)
+      monaco-editor:
+        specifier: ^0.57.0
+        version: 0.57.0
       monaco-vim:
         specifier: ^0.4.4
         version: 0.4.4(monaco-editor@0.57.0)
